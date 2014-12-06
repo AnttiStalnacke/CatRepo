@@ -23,4 +23,4 @@ def fib(n):    # write Fibonacci series up to n
         print b,
         a, b = b, a+b
 
-fib(4)
+fib(6)

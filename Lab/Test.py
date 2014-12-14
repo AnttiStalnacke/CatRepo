@@ -16,6 +16,7 @@ print 'But it does multiplication. A times B is', D
 
 print 'And we step this as well'
 
+
 def fib(n):    # write Fibonacci series up to n
     "Print a Fibonacci series up to n"
     a, b = 0, 1

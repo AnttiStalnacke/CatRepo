@@ -7,6 +7,11 @@ ci = CVTest_impl.CVTestImpl()
 
 cap = cv2.VideoCapture(0)
 
+ret, frame_first = cap.read()
+
+binary_image = np.ndarray(shape = (frame_first.shape[0:2]), dtype = bool)
+
+
 cv2.namedWindow('hsv')
 
 cv2.createTrackbar('hMin', 'hsv', 0, 255, ci.do_nothing)  # This is a function handle
@@ -21,27 +26,29 @@ while (True):
 
     ci.store_frame_time()
     ci.print_fps()
-    
+
     loop_count += 1
-    hMin = cv2.getTrackbarPos('hMin', 'hsv')
-    hMax = cv2.getTrackbarPos('hMax', 'hsv')
-    sMin = cv2.getTrackbarPos('sMin', 'hsv')
-    sMAx = cv2.getTrackbarPos('sMax', 'hsv')
-    vMin = cv2.getTrackbarPos('vMin', 'hsv')
-    vMax = cv2.getTrackbarPos('vMax', 'hsv')
-
-
+    h_min = cv2.getTrackbarPos('hMin', 'hsv')
+    h_max = cv2.getTrackbarPos('hMax', 'hsv')
+    s_min = cv2.getTrackbarPos('sMin', 'hsv')
+    s_max = cv2.getTrackbarPos('sMax', 'hsv')
+    v_min = cv2.getTrackbarPos('vMin', 'hsv')
+    v_max = cv2.getTrackbarPos('vMax', 'hsv')
 
     # Capture frame-by-frame
     ret, frame = cap.read()
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    cv2.imshow('hsv', hsv)
-    # cv2.imshow('hsv2', hsv[:, :, 1])
-    # cv2.imshow('hsv3', hsv[:, :, 2])
+    hsv_min = np.array([h_min, s_min, v_min], np.uint8)
+    hsv_max = np.array([h_max, s_max, v_max], np.uint8)
 
-    cv2.imshow('color', frame)
+    hsv_threshed = cv2.inRange(hsv, hsv_min, hsv_max)
+
+    cv2.imshow('binary', hsv_threshed)
+
+    cv2.imshow('hsv', hsv)
+
 
     # print loop_count
     if cv2.waitKey(1) & 0xFF == ord('q'):

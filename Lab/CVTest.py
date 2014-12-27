@@ -38,14 +38,22 @@ while (True):
     hsv_threshed = cv2.inRange(hsv, hsv_pos_min, hsv_pos_max)
 
     # Open and close to remove artifacts
-    hsv_opened = cv2.morphologyEx(hsv_threshed, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)))
-    hsv_opened_closed = cv2.morphologyEx(hsv_opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)))
+    hsv_opened = cv2.morphologyEx(hsv_threshed, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10)))
+    hsv_opened_closed = cv2.morphologyEx(hsv_opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10)))
+    hsv_opened_closed_contour = hsv_opened_closed.copy()
+
+    # Look for contours and plot those in the hsv image
+    binary_contours, hierarchy = cv2.findContours(hsv_opened_closed_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    cv2.drawContours(frame, binary_contours, -1, (0, 255, 0), 3)
+
+    # Show the threshed image
+    cv2.imshow('threshed', hsv_threshed)
 
     # Show the opened and closed image
     cv2.imshow('binary', hsv_opened_closed)
 
     # Show the original hsv image
-    cv2.imshow('hsv', hsv)
+    cv2.imshow('frame', frame)
 
     # Count loop for future use
     loop_count += 1

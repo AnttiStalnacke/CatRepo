@@ -3,54 +3,54 @@ import cv2
 import time
 import CVTest_impl
 
+# Create instance of CVTestImpl
 ci = CVTest_impl.CVTestImpl()
 
+# Start capturing video
 cap = cv2.VideoCapture(0)
 
-ret, frame_first = cap.read()
+# Open a new windows
+cv2.namedWindow('trackbars')
+# This image is only used to make the trackbars a bit bigger, ugly
+img = cv2.imread('white.jpeg')
+cv2.imshow('trackbars', img)
 
-binary_image = np.ndarray(shape = (frame_first.shape[0:2]), dtype = bool)
-
-
-cv2.namedWindow('hsv')
-
-cv2.createTrackbar('hMin', 'hsv', 0, 255, ci.do_nothing)  # This is a function handle
-cv2.createTrackbar('hMax', 'hsv', 0, 255, ci.do_nothing)
-cv2.createTrackbar('sMin', 'hsv', 0, 255, ci.do_nothing)
-cv2.createTrackbar('sMax', 'hsv', 0, 255, ci.do_nothing)
-cv2.createTrackbar('vMin', 'hsv', 0, 255, ci.do_nothing)
-cv2.createTrackbar('vMax', 'hsv', 0, 255, ci.do_nothing)
+# Create all the trackbars
+ci.create_all_trackbars()
 
 loop_count = 0
 while (True):
 
+    # Just used to count FPS
     ci.store_frame_time()
     ci.print_fps()
 
-    loop_count += 1
-    h_min = cv2.getTrackbarPos('hMin', 'hsv')
-    h_max = cv2.getTrackbarPos('hMax', 'hsv')
-    s_min = cv2.getTrackbarPos('sMin', 'hsv')
-    s_max = cv2.getTrackbarPos('sMax', 'hsv')
-    v_min = cv2.getTrackbarPos('vMin', 'hsv')
-    v_max = cv2.getTrackbarPos('vMax', 'hsv')
+    # Get positions of the trackbars
+    hsv_pos_min, hsv_pos_max = ci.get_all_trackbar_pos()
 
-    # Capture frame-by-frame
+    # Get a frame
     ret, frame = cap.read()
 
+    # Convert it to HSV to simplify thresholding
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    hsv_min = np.array([h_min, s_min, v_min], np.uint8)
-    hsv_max = np.array([h_max, s_max, v_max], np.uint8)
+    # Threshold
+    hsv_threshed = cv2.inRange(hsv, hsv_pos_min, hsv_pos_max)
 
-    hsv_threshed = cv2.inRange(hsv, hsv_min, hsv_max)
+    # Open and close to remove artifacts
+    hsv_opened = cv2.morphologyEx(hsv_threshed, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)))
+    hsv_opened_closed = cv2.morphologyEx(hsv_opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5)))
 
-    cv2.imshow('binary', hsv_threshed)
+    # Show the opened and closed image
+    cv2.imshow('binary', hsv_opened_closed)
 
+    # Show the original hsv image
     cv2.imshow('hsv', hsv)
 
+    # Count loop for future use
+    loop_count += 1
 
-    # print loop_count
+    # Press q to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

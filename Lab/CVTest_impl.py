@@ -48,3 +48,28 @@ class CVTestImpl():
         self.hsv_pos_max[2] = cv2.getTrackbarPos('vMax', 'trackbars')
 
         return self.hsv_pos_min, self.hsv_pos_max
+
+    def do_moments_find_coord(self, binary_contours, hierarchy):
+
+        max_area = 0
+        coord_found = False
+        num_of_objects = hierarchy.shape[1]
+        # And we only want to do things if we have actually filtered out a few contours
+        if hierarchy is not None:
+            print 'num_of_objects:', num_of_objects
+            for i in range(0, num_of_objects):
+
+                moments = cv2.moments(binary_contours[i])
+
+                # If the area is smaller than 400 pixels it's likely noise
+                if moments['m00'] > 400:
+                    if moments['m00'] > max_area:
+                        max_area = moments['m00']
+
+                        x_coord = int(moments['m10']/moments['m00'])
+                        y_coord = int(moments['m01']/moments['m00'])
+                        coord_found = True
+
+        if coord_found is True:
+            return coord_found, x_coord, y_coord
+

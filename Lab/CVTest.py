@@ -26,7 +26,9 @@ while (True):
     ci.print_fps()
 
     # Get positions of the trackbars
-    hsv_pos_min, hsv_pos_max = ci.get_all_trackbar_pos()
+    hsv_pos_min, hsv_pos_max = ci.get_all_trackbar_pos() #TODO
+    # hsv_pos_min = np.array([0, 0, 0])
+    # hsv_pos_max = np.array([90, 128, 128])
 
     # Get a frame
     ret, frame = cap.read()
@@ -46,6 +48,17 @@ while (True):
     binary_contours, hierarchy = cv2.findContours(hsv_opened_closed_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     cv2.drawContours(frame, binary_contours, -1, (0, 255, 0), 3)
 
+    # We only want to look for coords if we actually have a contour
+    if hierarchy is None:
+        print 'Hierarchy', hierarchy
+    if hierarchy is not None:
+        coord_found, x_coord, y_coord = ci.do_moments_find_coord(binary_contours, hierarchy)
+
+        if coord_found is True:
+            print 'X:', x_coord, 'Y:', y_coord
+
+
+
     # Show the threshed image
     cv2.imshow('threshed', hsv_threshed)
 
@@ -57,6 +70,9 @@ while (True):
 
     # Count loop for future use
     loop_count += 1
+
+    # print hierarchy
+
 
     # Press q to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):

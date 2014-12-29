@@ -22,8 +22,8 @@ loop_count = 0
 while (True):
 
     # Just used to count FPS
-    ci.store_frame_time()
-    ci.print_fps()
+    fps = ci.get_fps()
+    print fps
 
     # Get positions of the trackbars
     hsv_pos_min, hsv_pos_max = ci.get_all_trackbar_pos() #TODO
@@ -44,20 +44,17 @@ while (True):
     hsv_opened_closed = cv2.morphologyEx(hsv_opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10)))
     hsv_opened_closed_contour = hsv_opened_closed.copy()
 
-    # Look for contours and plot those in the hsv image
+    # Look for contours and plot those in the orignal frame
     binary_contours, hierarchy = cv2.findContours(hsv_opened_closed_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     cv2.drawContours(frame, binary_contours, -1, (0, 255, 0), 3)
 
     # We only want to look for coords if we actually have a contour
-    if hierarchy is None:
-        print 'Hierarchy', hierarchy
     if hierarchy is not None:
         coord_found, x_coord, y_coord = ci.do_moments_find_coord(binary_contours, hierarchy)
 
+        # Abd we inly print the coords if we actually found some
         if coord_found is True:
             print 'X:', x_coord, 'Y:', y_coord
-
-
 
     # Show the threshed image
     cv2.imshow('threshed', hsv_threshed)
@@ -70,9 +67,6 @@ while (True):
 
     # Count loop for future use
     loop_count += 1
-
-    # print hierarchy
-
 
     # Press q to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):

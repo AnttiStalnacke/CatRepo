@@ -14,7 +14,7 @@ class CVTestImpl():
         self.time_old = 0
         self.fps = 0
 
-    def store_frame_time(self):
+    def get_fps(self):
 
         self.time_old = self.time_new
         self.time_new = time.time()
@@ -22,12 +22,10 @@ class CVTestImpl():
         self.time_vec[1:4] = self.time_vec[0:3]
         self.time_vec[0] = time_of_frame
         self.fps = 1/self.time_vec.mean()
+        return self.fps
 
     def _do_nothing(self):
         pass
-
-    def print_fps(self):
-        print self.fps
 
     def create_all_trackbars(self):
 
@@ -55,14 +53,14 @@ class CVTestImpl():
         coord_found = False
         num_of_objects = hierarchy.shape[1]
         # And we only want to do things if we have actually filtered out a few contours
-        if hierarchy is not None:
+        if num_of_objects < 4:
             print 'num_of_objects:', num_of_objects
             for i in range(0, num_of_objects):
 
                 moments = cv2.moments(binary_contours[i])
 
                 # If the area is smaller than 400 pixels it's likely noise
-                if moments['m00'] > 400:
+                if moments['m00'] > 400: #TODO Not true in future
                     if moments['m00'] > max_area:
                         max_area = moments['m00']
 
@@ -72,4 +70,7 @@ class CVTestImpl():
 
         if coord_found is True:
             return coord_found, x_coord, y_coord
+        else:
+            # An error seems to occur if the number of returned variables change
+            return coord_found, 0, 0
 

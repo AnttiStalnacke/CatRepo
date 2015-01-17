@@ -24,7 +24,7 @@ class CatImpl():
         self.fps = 1/self.time_vec.mean()
         return self.fps
 
-    def _do_nothing(self):
+    def _do_nothing(self, remove_type_error):
         pass
 
     def create_all_trackbars(self):

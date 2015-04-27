@@ -65,7 +65,7 @@ while found_both is False:
         ci.inital_guess_green_square()
         found_red = True
 
-    # The user presses b if black is found
+    # The user presses g if green is found
     if cv2.waitKey(1) == ord('g') and found_red is True:
         hsv_pos_min_black = hsv_pos_min.copy()
         hsv_pos_max_black = hsv_pos_max.copy()

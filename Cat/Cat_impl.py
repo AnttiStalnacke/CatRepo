@@ -3,7 +3,6 @@ import cv2
 import time
 
 
-
 class CatImpl():
 
     def __init__(self):
@@ -55,7 +54,7 @@ class CatImpl():
         cv2.setTrackbarPos('vMin', 'trackbars', 198)
         cv2.setTrackbarPos('vMax', 'trackbars', 255)
 
-    def inital_guess_green_square(self):
+    def inital_guess_color_squares(self):
         cv2.setTrackbarPos('hMin', 'trackbars', 57)
         cv2.setTrackbarPos('hMax', 'trackbars', 94)
         cv2.setTrackbarPos('sMin', 'trackbars', 56)
@@ -70,13 +69,13 @@ class CatImpl():
         num_of_objects = hierarchy.shape[1]
         # And we only want to do things if we have actually filtered out a few contours
         if num_of_objects < 4:
-            print 'num_of_objects:', num_of_objects
+            # print 'num_of_objects:', num_of_objects
             for i in range(0, num_of_objects):
 
                 moments = cv2.moments(binary_contours[i])
 
                 # If the area is smaller than 400 pixels it's likely noise
-                if moments['m00'] > 400: #TODO Not true in future
+                if moments['m00'] > 4: #TODO Not true in future
                     if moments['m00'] > max_area:
                         max_area = moments['m00']
 

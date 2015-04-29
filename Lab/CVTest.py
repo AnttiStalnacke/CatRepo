@@ -56,8 +56,7 @@ while (True):
         if coord_found is True:
             print 'X:', x_coord, 'Y:', y_coord
 
-    # Show the threshed image
-    cv2.imshow('threshed', hsv_threshed)
+
 
     # Show the opened and closed image
     cv2.imshow('binary', hsv_opened_closed)

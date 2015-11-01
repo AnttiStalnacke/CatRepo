@@ -43,7 +43,7 @@ while found_both is False:
     hsv_opened_closed = cv2.morphologyEx(hsv_opened, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10)))
 
     # Show the opened and closed image
-    # cv2.imshow('binary', hsv_opened_closed)
+    cv2.imshow('binary', hsv_opened_closed)
 
     # Show the original hsv image
     cv2.imshow('frame', frame)
@@ -61,7 +61,7 @@ while found_both is False:
         hsv_pos_max_red = hsv_pos_max.copy()
         print 'The lower values for the HSV threshold for the red dot are', hsv_pos_min_red
         print 'The upper values for the HSV threshold for the red dot are', hsv_pos_max_red
-        print 'Now find the black squares and press "g" when done'
+        print 'Now find the red squares and press "g" when done'
         ci.inital_guess_color_squares()
         found_red = True
 
@@ -79,6 +79,8 @@ while found_both is False:
 #  this loop as well.
 
 print 'Hold down "q" to quit.'
+image = cv2.imread('catimg.jpg')
+cat_x_coord, cat_y_coord = ci.get_cat_coord()
 while True:
 
     # Press q to quit
@@ -97,7 +99,9 @@ while True:
     if hierarchy is not None:
         coord_found, x_coord, y_coord = ci.do_moments_find_coord(binary_contours, hierarchy)
         # x print x_coord, y_coord
-        cv2.circle(frame, (x_coord,y_coord),15,180,1)
+        cv2.circle(frame, (x_coord, y_coord),15,180,1)
+        cat_x_coord, cat_y_coord = ci.update_cat(y_coord, x_coord) #TODO Understand: Why is x and y switched???
+    frame[cat_x_coord-24:cat_x_coord+24, cat_y_coord-24:cat_y_coord+24, :] = image
 
     cv2.imshow('frame', frame)
 

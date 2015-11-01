@@ -12,6 +12,8 @@ class CatImpl():
         self.time_new = 0
         self.time_old = 0
         self.fps = 0
+        self.cat_x_coord = 310
+        self.cat_y_coord = 240
 
     def get_fps(self):
 
@@ -88,4 +90,20 @@ class CatImpl():
         else:
             # An error seems to occur if the number of returned variables change
             return coord_found, 0, 0
+
+    def update_cat(self, x_coord, y_coord):
+        step_length = 3
+        diff_x = x_coord - self.cat_x_coord
+        diff_y = y_coord - self.cat_y_coord
+        angle = np.arctan2(diff_y, diff_x)
+        move_y = np.rint(np.sin(angle) * step_length)
+        move_x = np.rint(np.cos(angle) * step_length)
+
+        self.cat_x_coord += move_x
+        self.cat_y_coord += move_y
+
+        return self.cat_x_coord, self.cat_y_coord
+
+    def get_cat_coord(self):
+        return self.cat_x_coord, self.cat_y_coord
 
